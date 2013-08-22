@@ -6,7 +6,7 @@ namespace Websoftwares;
  *
  * @package Websoftwares
  * @license http://www.dbad-license.org/ DbaD
- * @version 0.0.6
+ * @version 0.0.7
  * @author Boris <boris@websoftwar.es>
  */
 class Session implements \ArrayAccess
@@ -256,24 +256,20 @@ class Session implements \ArrayAccess
      * handler
      * @see http://www.php.net/manual/en/function.session-set-save-handler.php
      *
-     * @param  $handler
+     * @param  $storage
      * @return boolean
      */
     protected function handler($storage = null)
     {
        if ($storage) {
-            if (version_compare(phpversion(), '5.4.0', '>=')) {
-               return session_set_save_handler($storage, false);
-            } else {
-                return session_set_save_handler(
-                    array($storage, 'open'),
-                    array($storage, 'close'),
-                    array($storage, 'read'),
-                    array($storage, 'write'),
-                    array($storage, 'destroy'),
-                    array($storage, 'gc')
-                );
-            }
+            return session_set_save_handler(
+                array($storage, 'open'),
+                array($storage, 'close'),
+                array($storage, 'read'),
+                array($storage, 'write'),
+                array($storage, 'destroy'),
+                array($storage, 'gc')
+            );
         }
 
         return false;
