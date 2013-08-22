@@ -5,7 +5,11 @@ php:
   - 5.4
   - 5.5
 
+services:
+  - memcached
+
 before_script:
+  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - curl -s http://getcomposer.org/installer | php
   - php composer.phar install --dev --prefer-source
 
