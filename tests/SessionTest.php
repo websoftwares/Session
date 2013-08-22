@@ -13,6 +13,14 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->reflection = new \ReflectionClass($this->session);
     }
 
+    public function teardown()
+    {
+        session_unset();
+        if (session_id() !== '') {
+            session_destroy();
+        }
+    }
+
     public function testInstantiateAsObjectSucceeds()
     {
         $this->assertInstanceOf('Websoftwares\Session',  $this->session);
