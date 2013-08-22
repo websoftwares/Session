@@ -13,102 +13,131 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->reflection = new \ReflectionClass($this->session);
     }
 
-    public function teardown()
-    {
-        session_unset();
-        if (session_id() !== '') {
-            session_destroy();
-        }
-    }
-
+    /**
+     * @runInSeparateProcess
+     */
     public function testInstantiateAsObjectSucceeds()
     {
         $this->assertInstanceOf('Websoftwares\Session',  $this->session);
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testSessionStart()
     {
-        $this->assertFalse($this->session->active());
-        $this->assertTrue($this->session->start());
-        $this->assertFalse($this->session->start());
-        $this->assertTrue($this->session->active());
-        $this->assertTrue($this->session->close());
+        $session = new Session;
+        $this->assertFalse($session->active());
+        $this->assertTrue($session->start());
+        $this->assertFalse($session->start());
+        $this->assertTrue($session->active());
+        $this->assertTrue($session->destroy());
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testSessionClose()
     {
-        $this->assertFalse($this->session->active());
-        $this->assertFalse($this->session->close());
-        $this->assertTrue($this->session->start());
-        $this->assertTrue($this->session->close());
-        $this->assertFalse($this->session->active());
+        $session = new Session;
+        $this->assertFalse($session->active());
+        $this->assertFalse($session->close());
+        $this->assertTrue($session->start());
+        $this->assertTrue($session->close());
+        $this->assertFalse($session->active());
+        $this->assertTrue($session->start());
+        $this->assertTrue($session->destroy());
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testSessionDestroy()
     {
-        $this->assertFalse($this->session->active());
-        $this->assertFalse($this->session->destroy());
-        $this->assertTrue($this->session->start());
-        $this->assertTrue($this->session->destroy());
-        $this->assertFalse($this->session->active());
+        $session = new Session;
+        $this->assertFalse($session->active());
+        $this->assertFalse($session->destroy());
+        $this->assertTrue($session->start());
+        $this->assertTrue($session->destroy());
+        $this->assertFalse($session->active());
         $this->assertEquals($_SESSION, array());
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testSessionName()
     {
+        $session = new Session;
         $method = $this->getMethod('name');
-        $actual = $method->invoke($this->session);
+        $actual = $method->invoke($session);
         $this->assertEquals('PHPSESSID',$actual);
-        $new = $method->invoke($this->session, 'test');
+        $new = $method->invoke($session, 'test');
         $this->assertEquals('PHPSESSID',$new);
-        $this->assertEquals('test',$method->invoke($this->session));
+        $this->assertEquals('test',$method->invoke($session));
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testSessionMeta()
     {
+        $session = new Session;
         session_start();
         $method = $this->getMethod('meta');
-        $actual = $method->invoke($this->session);
-        $expected = array('meta' => array('name' => 'test','created' => time(),'updated' =>time()));
+        $actual = $method->invoke($session);
+        $expected = array('meta' => array('name' => 'PHPSESSID','created' => time(),'updated' =>time()));
         $this->assertEquals($expected, $_SESSION);
         sleep(1);
         $expected['meta']['updated'] = time();
-        $method->invoke($this->session);
+        $method->invoke($session);
         $this->assertEquals($expected, $_SESSION);
-        $this->session->destroy();
+        $session->destroy();
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testArryAccess()
     {
-        $this->assertNull($this->session['test']);
-        $expected = array('meta' => array('name' => 'test','created' => time(),'updated' =>time()));
+        $session = new Session;
+        $this->assertNull($session['test']);
+        $expected = array('meta' => array('name' => 'PHPSESSID','created' => time(),'updated' =>time()));
         $this->assertEquals($expected, $_SESSION);
         $value = 'sessionValue';
         $expected['test'] = $value;
-        $this->session['test'] = $value;
+        $session['test'] = $value;
         $this->assertEquals($expected, $_SESSION);
-        $this->assertEquals($this->session['test'], $value);
-        unset($this->session['test']);
-        $this->assertEquals($_SESSION, array('meta' => array('name' => 'test','created' => time(),'updated' =>time())));
-        $this->session->close();
+        $this->assertEquals($session['test'], $value);
+        unset($session['test']);
+        $this->assertEquals($_SESSION, array('meta' => array('name' => 'PHPSESSID','created' => time(),'updated' =>time())));
+        $session->close();
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testId()
     {
-        $this->session->start();
+        $session = new Session;
+        $session->start();
         $expected = 'A,-1';
-        $this->session->id('A,-1');
-        $this->assertEquals($expected, $this->session->id());
-        $this->session->close();
+        $session->id('A,-1');
+        $this->assertEquals($expected, $session->id());
+        $session->close();
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testRegenerate()
     {
-        $this->assertFalse($this->session->regenerate());
-        $this->session->start();
-        $this->assertTrue($this->session->regenerate());
-        $this->assertTrue($this->session->regenerate('delete'));
-        $this->session->destroy();
+        $session = new Session;
+        $this->assertFalse($session->regenerate());
+        $session->start();
+        $this->assertTrue($session->regenerate());
+        $this->assertTrue($session->regenerate('delete'));
+        $session->destroy();
     }
 
     public function getMethod($method)
@@ -119,6 +148,9 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         return $method;
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testHandlerInjectionSucceeds()
     {
         // create connection to memcached
