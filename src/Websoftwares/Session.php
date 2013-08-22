@@ -6,7 +6,7 @@ namespace Websoftwares;
  *
  * @package Websoftwares
  * @license http://www.dbad-license.org/ DbaD
- * @version 0.0.4
+ * @version 0.0.5
  * @author Boris <boris@websoftwar.es>
  */
 class Session implements \ArrayAccess
