@@ -42,7 +42,6 @@ var_dump($_SESSION);
 
 // Destroy
 $session->destroy();
-
 ```
 
 ## Testing
