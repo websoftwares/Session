@@ -192,23 +192,4 @@ class SessionTest extends \PHPUnit_Framework_TestCase
 
         return $property->setValue($this->session, $value);
     }
-
-    /**
-     * @expectedException invalidArgumentException
-     */
-    public function testSessionNameFails()
-    {
-        $method = $this->getMethod('name');
-        $actual = $method->invoke($this->session, array('test'));
-    }
-
-    /**
-     * @expectedException invalidArgumentException
-     */
-    public function testSessionIdFails()
-    {
-        $this->session->start();
-        $this->session->id('A*');
-        $this->session->destroy();
-    }
 }
