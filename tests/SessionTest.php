@@ -109,6 +109,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $session['test'] = $value;
         $this->assertEquals($expected, $_SESSION);
         $this->assertEquals($session['test'], $value);
+        $this->assertTrue(isset($session['test']));
         unset($session['test']);
         $this->assertEquals($_SESSION, array('meta' => array('name' => 'PHPSESSID','created' => time(),'updated' =>time())));
         $session->close();

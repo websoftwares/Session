@@ -31,14 +31,12 @@ class Session implements \ArrayAccess
             // Provide custom session name
             'name' => null,
             // Lifetime of the session cookie, defined in seconds.
-            // Smaller exploitation window for xss/csrf/clickjacking.
             'lifetime' => 0,
             // Path on the domain where the cookie will work. Use a single slash ('/') for all paths on the domain.
             'path' => '/',
             // Cookie domain, for example 'www.php.net'. To make cookies visible on all subdomains then the domain must be prefixed with a dot like '.php.net'.
             'domain' => null,
             // If TRUE cookie will only be sent over secure connections.
-            // OWASP a9 violations.
             'secure' => true,
             // If set to TRUE then PHP will attempt to send the httponly flag when setting the session cookie.
             'httponly' => false
@@ -61,7 +59,6 @@ class Session implements \ArrayAccess
         ini_set('session.use_only_cookies', '1');
 
         // Better entropy source
-        // http://www.youtube.com/watch?v=YDW7kobM6Ik
         ini_set('session.entropy_file', "/dev/urandom");
 
         // Custom save handler
@@ -120,7 +117,7 @@ class Session implements \ArrayAccess
         $_SESSION = array();
 
         if (ini_get('session.use_cookies')) {
-            //  http://php.net/manual/en/function.session-get-cookie-params.php
+            // http://php.net/manual/en/function.session-get-cookie-params.php
             $params = session_get_cookie_params();
             // Clear session cookie
             setcookie(
@@ -179,7 +176,8 @@ class Session implements \ArrayAccess
     }
 
     /**
-     * id
+     * id the session id
+     *
      * @param  string $value
      * @return string
      */
@@ -196,11 +194,11 @@ class Session implements \ArrayAccess
     }
 
     /**
-     * regenerate
+     * regenerate the session id
      * @see http://www.php.net/manual/en/function.session-regenerate-id.php
      *
      * @param  boolean $deleteSession
-     * @return bool    true on success or false on failure.
+     * @return boolean
      */
     public function regenerate($deleteSession = false)
     {
@@ -233,6 +231,7 @@ class Session implements \ArrayAccess
 
     /**
      * meta add meta data to the session
+     *
      * @return void
      */
     protected function meta()
@@ -256,7 +255,7 @@ class Session implements \ArrayAccess
      * handler
      * @see http://www.php.net/manual/en/function.session-set-save-handler.php
      *
-     * @param  $storage
+     * @param object $storage
      * @return boolean
      */
     protected function handler($storage = null)
